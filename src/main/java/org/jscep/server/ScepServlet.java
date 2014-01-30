@@ -93,6 +93,9 @@ public abstract class ScepServlet extends HttpServlet {
     private static final String OP_PARAM = "operation";
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ScepServlet.class);
+    
+    protected X509Certificate reqCert;
+    
     /**
      * Serialization ID
      */
@@ -203,7 +206,6 @@ public abstract class ScepServlet extends HttpServlet {
             X509CertificateHolder holder = reqCerts.iterator().next();
             ByteArrayInputStream bais = new ByteArrayInputStream(
                     holder.getEncoded());
-            X509Certificate reqCert;
             try {
                 reqCert = (X509Certificate) factory.generateCertificate(bais);
             } catch (CertificateException e) {
@@ -462,7 +464,7 @@ public abstract class ScepServlet extends HttpServlet {
     private void doGetCaCaps(final HttpServletRequest req,
             final HttpServletResponse res) throws Exception {
         res.setHeader("Content-Type", "text/plain");
-        final Set<Capability> caps = doCapabilities(req.getParameter(MSG_PARAM));
+        final Set<Capability> caps = doCapabilities(req.getParameter("message"));
         for (Capability cap : caps) {
             res.getWriter().write(cap.toString());
             res.getWriter().write('\n');
